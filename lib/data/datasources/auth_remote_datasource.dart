@@ -12,7 +12,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> authenticate(GoogleTokenDto tokenDto) async {
     final response = await client.post(
-      'http://localhost:3000/authentication/google',
+      'http://10.0.2.2:3000/authentication/google', // à changer selon utilisation sur iOS (xcode), android (emulateur) ou si l'api est déployée
       data: {
         'token': tokenDto.token,
         if (tokenDto.schoolName != null) 'schoolName': tokenDto.schoolName,

@@ -31,24 +31,19 @@ class LoginPage extends ConsumerWidget {
                 label: const Text('Se connecter avec Google'),
                 onPressed: () async {
                   try {
-                    // 1. Lancer l’UI Google
                     final account = await googleSignIn.signIn();
                     if (account == null) return;
-
-                    // 2. Récupérer l’ID token
                     final auth = await account.authentication;
                     final idToken = auth.idToken;
                     if (idToken == null) {
                       throw Exception('Le token Google est nul');
                     }
-
-                    // 3. Appeler votre use-case
+                    final prenom = account.displayName?.split(' ').first ?? 'Utilisateur';
                     final dto = GoogleTokenDto(token: idToken);
                     await ref
                         .read(authProvider.notifier)
-                        .authenticateWithGoogle(dto);
+                        .authenticateWithGoogle(dto, prenom: prenom);
                   } catch (e) {
-                    // En plus du listener, vous pouvez logger
                     debugPrint('Erreur Google Sign-In : $e');
                   }
                 },

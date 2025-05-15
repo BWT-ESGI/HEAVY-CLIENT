@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "242304203312",
+    "project_id": "bwt-pa",
+    "storage_bucket": "bwt-pa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242304203312:android:a86d801b19080b06a84bf5",
+        "android_client_info": {
+          "package_name": "com.example.clubz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242304203312-s8k12thj5csetjb1u83ns2nqn9s4ch6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.clubz",
+            "certificate_hash": "13d95d338ba8cec28d9f2cf4daf15a26a1ff7333"
+          }
+        },
+        {
+          "client_id": "242304203312-n8hl0ofv3lgid46blg6kdhfajctves20.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZaf0rBI3nKtjCBrkzVUwFAwweSRLfdoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242304203312-n8hl0ofv3lgid46blg6kdhfajctves20.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "242304203312-bqm27hqiq1uvpcukpq2f8t84adbk1lqq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.esgi.edupromanager."
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
