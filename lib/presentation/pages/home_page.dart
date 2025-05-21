@@ -26,6 +26,14 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Accueil'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/settings');
+              },
+            ),
+          ],
           bottom: const TabBar(
             tabs: _tabs,
             indicatorWeight: 3,
@@ -38,3 +46,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+

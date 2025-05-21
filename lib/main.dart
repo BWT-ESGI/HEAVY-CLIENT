@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'injection.dart';
 import 'presentation/pages/login_page.dart';
+import 'presentation/pages/settings_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
       title: 'Clean Architecture App',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const LoginPage(),
+      getPages: [
+        GetPage(name: '/settings', page: () => const SettingsPage()),
+      ],
     );
   }
 }

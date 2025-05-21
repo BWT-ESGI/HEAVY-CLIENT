@@ -38,6 +38,9 @@ class LoginPage extends ConsumerWidget {
                     if (idToken == null) {
                       throw Exception('Le token Google est nul');
                     }
+                    // Log user name + it's token
+                    debugPrint('Nom : ${account.displayName}');
+                    debugPrint('Token : $idToken');
                     final prenom = account.displayName?.split(' ').first ?? 'Utilisateur';
                     final dto = GoogleTokenDto(token: idToken);
                     await ref
