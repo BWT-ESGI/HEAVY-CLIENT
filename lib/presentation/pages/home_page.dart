@@ -37,10 +37,21 @@ class HomePage extends StatelessWidget {
           bottom: const TabBar(
             tabs: _tabs,
             indicatorWeight: 3,
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white54,
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
           ),
+          elevation: 0,
+          backgroundColor: Colors.black,
         ),
-        body: const TabBarView(
-          children: _pages,
+        body: Container(
+          decoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+          child: const TabBarView(
+            children: _pages,
+          ),
         ),
       ),
     );

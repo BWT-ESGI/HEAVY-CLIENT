@@ -5,10 +5,23 @@ class GradingSheetsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
-        child: Text('<p></p>'),
+        child: Card(
+          color: Colors.white10,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Text(
+              'Aucune grille à afficher',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
+
