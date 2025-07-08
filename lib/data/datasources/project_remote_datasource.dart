@@ -7,7 +7,7 @@ class ProjectRemoteDatasource {
   Future<List<Project>> fetchProjects(String promotionId) async {
     final token = await AuthTokenUtil.getToken();
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3000/projects?promotionId=$promotionId'),
+      Uri.parse('https://api-bwt.thomasgllt.fr/projects?promotionId=$promotionId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {

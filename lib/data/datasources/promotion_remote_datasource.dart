@@ -8,7 +8,7 @@ class PromotionRemoteDatasource {
   Future<List<Promotion>> fetchPromotions() async {
     final token = await AuthTokenUtil.getToken();
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3000/promotions'),
+      Uri.parse('https://api-bwt.thomasgllt.fr/promotions'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {

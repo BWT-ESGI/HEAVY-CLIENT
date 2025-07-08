@@ -8,7 +8,7 @@ class GroupRemoteDatasource {
   Future<List<Group>> fetchGroupsByProject(String projectId) async {
     final token = await AuthTokenUtil.getToken();
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3000/groups?projectId=$projectId'),
+      Uri.parse('https://api-bwt.thomasgllt.fr/groups?projectId=$projectId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {

@@ -11,7 +11,7 @@ class DeliverableRemoteDatasource {
     final token = await AuthTokenUtil.getToken();
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:3000/deliverables?promotionId=$promotionId&projectId=$projectId'),
+          'https://api-bwt.thomasgllt.fr/deliverables?promotionId=$promotionId&projectId=$projectId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {

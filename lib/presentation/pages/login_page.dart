@@ -29,8 +29,13 @@ class LoginPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock_outline, size: 64, color: Colors.white.withOpacity(0.8)),
-              const SizedBox(height: 32),
+              Image.asset(
+                'assets/images/logo-dark.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+              ),
+
               Text(
                 'Bienvenue',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
