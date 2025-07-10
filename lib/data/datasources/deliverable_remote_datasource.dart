@@ -1,17 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/deliverable.dart';
-import '../../domain/entities/promotion.dart';
-import '../../domain/entities/project.dart';
-import 'auth_token_util.dart';
 
 class DeliverableRemoteDatasource {
-  Future<List<Deliverable>> fetchDeliverablesByPromotionAndProject(
-      String promotionId, String projectId) async {
-    final token = await AuthTokenUtil.getToken();
+  Future<List<Deliverable>> fetchDeliverablesByProject(String projectId) async {
+    debugPrint("Récupération des livrables pour le projet $projectId");
+
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'accessToken');
     final response = await http.get(
       Uri.parse(
-          'https://api-bwt.thomasgllt.fr/deliverables?promotionId=$promotionId&projectId=$projectId'),
+          'https://api-bwt.thomasgllt.fr/deliverables/by-project/$projectId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {

@@ -8,7 +8,6 @@ class DeliverableRepositoryImpl {
 
   Future<List<Deliverable>> getDeliverablesByPromotionAndProject(
       String promotionId, String projectId) {
-    return datasource.fetchDeliverablesByPromotionAndProject(
-        promotionId, projectId);
+    return datasource.fetchDeliverablesByProject(projectId);
   }
 }

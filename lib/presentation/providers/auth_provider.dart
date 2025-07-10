@@ -21,7 +21,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
       await _storage.write(key: 'accessToken', value: token);
       state = const AsyncValue.data(null);
       // Redirige vers HomePage avec le prénom
-      Get.offAll(() => HomePage(prenom: prenom));
+      Get.offAll(() => const HomePage());
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-import '../../domain/entities/google_token_dto.dart';
 import '../providers/auth_provider.dart';
+import '../../services/auth_service.dart';
+import 'home_page.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
@@ -12,7 +13,6 @@ class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    final googleSignIn = Get.find<GoogleSignIn>();
 
     ref.listen<AsyncValue<void>>(authProvider, (_, state) {
       if (state.hasError) {
@@ -35,15 +35,20 @@ class LoginPage extends ConsumerWidget {
                 height: 200,
                 fit: BoxFit.contain,
               ),
-
               Text(
                 'Bienvenue',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(
                 'Connectez-vous avec votre compte Google pour continuer.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(color: Colors.white70),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -55,21 +60,14 @@ class LoginPage extends ConsumerWidget {
                         icon: const Icon(Icons.login),
                         label: const Text('Se connecter avec Google'),
                         onPressed: () async {
-                          try {
-                            final account = await googleSignIn.signIn();
-                            if (account == null) return;
-                            final auth = await account.authentication;
-                            final idToken = auth.idToken;
-                            if (idToken == null) {
-                              throw Exception('Le token Google est nul');
-                            }
-                            debugPrint('Nom : ${account.displayName}');
-                            debugPrint('Token : $idToken');
-                            final prenom = account.displayName?.split(' ').first ?? 'Utilisateur';
-                            final dto = GoogleTokenDto(token: idToken);
-                            await ref.read(authProvider.notifier).authenticateWithGoogle(dto, prenom: prenom);
-                          } catch (e) {
-                            debugPrint('Erreur Google Sign-In : $e');
+                          final result =
+                              await AuthService.signInWithGoogleAndCheckRole(
+                                  context);
+                          if (result) {
+                            debugPrint(
+                                "L'utilisateur est un professeur, on continue la navigation");
+                            // Ici, l'utilisateur est un professeur, on peut le rediriger vers la page d'accueil
+                            Get.offAll(() => const HomePage());
                           }
                         },
                         style: ElevatedButton.styleFrom(

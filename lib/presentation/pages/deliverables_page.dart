@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/datasources/deliverable_remote_datasource.dart';
 import '../../data/datasources/promotion_remote_datasource.dart';
-import '../../data/datasources/project_remote_datasource.dart';
 import '../../domain/entities/deliverable.dart';
 import '../../domain/entities/promotion.dart';
 import '../../domain/entities/project.dart';
@@ -56,14 +55,15 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
     });
   }
 
-  Future<void> _fetchDeliverables(String promoId, String projectId) async {
+  Future<void> _fetchDeliverables(String projectId) async {
+
     setState(() {
       _loadingDeliverables = true;
       _deliverables = [];
     });
     try {
       _deliverables = await DeliverableRemoteDatasource()
-          .fetchDeliverablesByPromotionAndProject(promoId, projectId);
+          .fetchDeliverablesByProject(projectId);
       setState(() {
         _loadingDeliverables = false;
       });
@@ -122,7 +122,7 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
                           _deliverables = [];
                         });
                         if (proj != null && _selectedPromotion != null) {
-                          _fetchDeliverables(_selectedPromotion!.id, proj.id);
+                          _fetchDeliverables(proj.id);
                         }
                       },
                     ),

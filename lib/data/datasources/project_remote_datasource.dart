@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/project.dart';
-import 'auth_token_util.dart';
 
 class ProjectRemoteDatasource {
   Future<List<Project>> fetchProjects(String promotionId) async {
-    final token = await AuthTokenUtil.getToken();
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'accessToken');
     final response = await http.get(
       Uri.parse('https://api-bwt.thomasgllt.fr/projects?promotionId=$promotionId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,

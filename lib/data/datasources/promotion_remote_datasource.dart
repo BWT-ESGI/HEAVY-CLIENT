@@ -1,14 +1,19 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/promotion.dart';
 import '../../domain/entities/project.dart';
-import 'auth_token_util.dart';
 
 class PromotionRemoteDatasource {
   Future<List<Promotion>> fetchPromotions() async {
-    final token = await AuthTokenUtil.getToken();
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'accessToken');
+    final userId = await storage.read(key: 'userId');
+    if (userId == null) {
+      throw Exception('Aucun userId trouvé pour charger les promotions');
+    }
     final response = await http.get(
-      Uri.parse('https://api-bwt.thomasgllt.fr/promotions'),
+      Uri.parse('https://api-bwt.thomasgllt.fr/promotions/user/$userId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {

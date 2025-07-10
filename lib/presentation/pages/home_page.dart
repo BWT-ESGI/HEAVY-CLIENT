@@ -5,7 +5,7 @@ import 'reports_page.dart';
 import 'grading_sheets_page.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required String prenom}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   static const _tabs = <Tab>[
     Tab(text: 'Livrables'),
