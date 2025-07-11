@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../data/datasources/deliverable_remote_datasource.dart';
 import '../../data/datasources/promotion_remote_datasource.dart';
-import '../../domain/entities/deliverable.dart';
 import '../../domain/entities/promotion.dart';
 import '../../domain/entities/project.dart';
+import 'group_deliverables_viewer.dart';
 
 class DeliverablesPage extends StatefulWidget {
   const DeliverablesPage({Key? key}) : super(key: key);
@@ -17,7 +17,6 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
   Project? _selectedProject;
   List<Promotion> _promotions = [];
   List<Project> _projects = [];
-  List<Deliverable> _deliverables = [];
   bool _loadingPromos = true;
   bool _loadingProjects = false;
   bool _loadingDeliverables = false;
@@ -51,18 +50,15 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
       _selectedPromotion = promo;
       _selectedProject = null;
       _projects = promo?.projects ?? [];
-      _deliverables = [];
     });
   }
 
   Future<void> _fetchDeliverables(String projectId) async {
-
     setState(() {
       _loadingDeliverables = true;
-      _deliverables = [];
     });
     try {
-      _deliverables = await DeliverableRemoteDatasource()
+      await DeliverableRemoteDatasource()
           .fetchDeliverablesByProject(projectId);
       setState(() {
         _loadingDeliverables = false;
@@ -119,7 +115,6 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
                       onChanged: (proj) {
                         setState(() {
                           _selectedProject = proj;
-                          _deliverables = [];
                         });
                         if (proj != null && _selectedPromotion != null) {
                           _fetchDeliverables(proj.id);
@@ -134,42 +129,7 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
                 _selectedPromotion != null &&
                 _selectedProject != null)
               Expanded(
-                child: _deliverables.isEmpty
-                    ? const Center(child: Text('Aucun livrable'))
-                    : ListView.builder(
-                        itemCount: _deliverables.length,
-                        itemBuilder: (context, index) {
-                          final d = _deliverables[index];
-                          return ListTile(
-                            title: Text(d.title),
-                            subtitle: Text(d.description),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(d.submitted ? 'Soumis' : 'Non soumis',
-                                    style: TextStyle(
-                                        color: d.submitted
-                                            ? Colors.green
-                                            : Colors.red)),
-                                if (d.isLate)
-                                  const Text('En retard',
-                                      style: TextStyle(color: Colors.orange)),
-                                Text(d.isConform ? 'Conforme' : 'Non conforme',
-                                    style: TextStyle(
-                                        color: d.isConform
-                                            ? Colors.green
-                                            : Colors.red)),
-                                if (d.similarityRate != null)
-                                  Text(
-                                      'Similarité: \\${(d.similarityRate! * 100).toStringAsFixed(1)}%'),
-                              ],
-                            ),
-                            onTap: () {
-                              // TODO: Naviguer vers le détail du livrable
-                            },
-                          );
-                        },
-                      ),
+                child: GroupDeliverablesViewer(projectId: _selectedProject!.id),
               ),
           ],
         ),
