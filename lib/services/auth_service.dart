@@ -81,6 +81,7 @@ class AuthService {
     } catch (e) {
       // Gérer l'erreur de connexion
       await _googleSignIn.signOut();
+      debugPrint("Erreur lors de la connexion Google : $e");
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

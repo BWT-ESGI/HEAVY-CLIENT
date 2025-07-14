@@ -6,7 +6,7 @@ class ReportRepositoryImpl {
 
   ReportRepositoryImpl(this.datasource);
 
-  Future<List<Report>> getReports() {
-    return datasource.fetchReports();
+  Future<List<Report>> getReports({required String groupId}) {
+    return datasource.fetchReports(groupId: groupId);
   }
 }

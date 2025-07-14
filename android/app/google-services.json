@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "242304203312-rh1b9t6nnjamjje044mejgahr37u7qjr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.clubz",
+            "certificate_hash": "b72abd1929dfa65dd5bbbbda1e220cd709be014d"
+          }
+        },
+        {
           "client_id": "242304203312-s8k12thj5csetjb1u83ns2nqn9s4ch6g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

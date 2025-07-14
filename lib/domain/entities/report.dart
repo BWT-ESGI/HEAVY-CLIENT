@@ -1,3 +1,4 @@
+
 class Report {
   final String id;
   final String title;
@@ -10,4 +11,13 @@ class Report {
     required this.content,
     required this.groupName,
   });
+
+  factory Report.fromJson(Map<String, dynamic> json) {
+    return Report(
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
+      groupName: json['groupName'] ?? '',
+    );
+  }
 }
