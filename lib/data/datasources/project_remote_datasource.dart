@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/project.dart';
@@ -11,6 +12,7 @@ class ProjectRemoteDatasource {
       Uri.parse('https://api-bwt.thomasgllt.fr/projects?promotionId=$promotionId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
+    debugPrint('Réponse API (api-bwt.thomasgllt.fr/projects?promotionId=$promotionId): status=${response.statusCode}, \nbody=${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data

@@ -18,7 +18,7 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
   List<Promotion> _promotions = [];
   List<Project> _projects = [];
   bool _loadingPromos = true;
-  bool _loadingProjects = false;
+  final bool _loadingProjects = false;
   bool _loadingDeliverables = false;
   String? _error;
 
@@ -65,6 +65,7 @@ class _DeliverablesPageState extends State<DeliverablesPage> {
       });
     } catch (e) {
       setState(() {
+        debugPrint('delivrables_page.dart Erreur chargement livrables: $e');
         _error = 'Erreur chargement livrables';
         _loadingDeliverables = false;
       });

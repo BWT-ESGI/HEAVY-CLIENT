@@ -8,7 +8,7 @@ class GroupRemoteDatasource {
     const storage = FlutterSecureStorage();
     final token = await storage.read(key: 'accessToken');
     final response = await http.get(
-      Uri.parse('https://api-bwt.thomasgllt.fr/groups?projectId=$projectId'),
+      Uri.parse('https://api-bwt.thomasgllt.fr/groups/by-project/$projectId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
     if (response.statusCode == 200) {
@@ -19,7 +19,7 @@ class GroupRemoteDatasource {
                 name: e['name'],
                 leaderId: e['leader'] is String
                     ? e['leader']
-                    : (e['leader']?['id'] ?? null),
+                    : (e['leader']?['id']),
                 leaderName: e['leader'] is String
                     ? ''
                     : (e['leader']?['username'] ?? ''),

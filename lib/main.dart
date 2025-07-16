@@ -29,7 +29,8 @@ class MyApp extends StatelessWidget {
           primary: Colors.white,
           secondary: Colors.black,
         ),
-        textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).apply(
+        textTheme: Theme.of(context).textTheme.apply(
+          fontFamily: 'Segoe UI',
           bodyColor: Colors.white,
           displayColor: Colors.white,
         ),
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
-            textStyle: GoogleFonts.roboto(fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(fontFamily: 'Segoe UI', fontWeight: FontWeight.bold),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

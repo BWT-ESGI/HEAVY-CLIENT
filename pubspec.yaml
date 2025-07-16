@@ -38,10 +38,13 @@ dependencies:
   get: ^4.6.6
   intl: 0.20.2
   dio: ^5.7.0
+  flutter_html: ^3.0.0-beta.2
   flutter_secure_storage: ^9.2.2
   socket_io_client: ^3.0.0
   google_fonts: ^6.2.1
+  flutter_inappwebview: ^6.0.0
 
+  http: any
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_test:
@@ -101,3 +104,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  fonts:
+    - family: Segoe UI
+      fonts:
+        - asset: assets/fonts/Segoe UI.ttf
+        - asset: assets/fonts/Segoe UI Italic.ttf
+          style: italic
+        - asset: assets/fonts/Segoe UI Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Segoe UI Bold Italic.ttf
+          weight: 700
+          style: italic

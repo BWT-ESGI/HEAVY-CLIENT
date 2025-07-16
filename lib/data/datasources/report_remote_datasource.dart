@@ -13,7 +13,7 @@ class ReportRemoteDatasource {
       url,
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
-    debugPrint('Réponse API rapports: status=${response.statusCode}, body=${response.body}');
+    debugPrint('Réponse API (api-bwt.thomasgllt.fr/reports/by-group/$groupId): status=${response.statusCode}, \nbody=${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       return data.map((json) => Report.fromJson(json)).toList();

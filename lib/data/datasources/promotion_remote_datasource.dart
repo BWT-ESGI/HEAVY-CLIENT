@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/promotion.dart';
@@ -16,6 +17,21 @@ class PromotionRemoteDatasource {
       Uri.parse('https://api-bwt.thomasgllt.fr/promotions/user/$userId'),
       headers: token != null ? {'Authorization': 'Bearer $token'} : null,
     );
+    debugPrint('Réponse API (status: \\${response.statusCode}):');
+    try {
+      final dynamic jsonBody = jsonDecode(response.body);
+      // Supprimer la clé 'students' de chaque promotion si présente
+      if (jsonBody is List) {
+        for (final item in jsonBody) {
+          item.remove('students');
+        }
+      }
+      final String prettyJson = const JsonEncoder.withIndent('  ').convert(jsonBody);
+      debugPrint(prettyJson);
+    } catch (e) {
+      debugPrint('Erreur lors du décodage JSON: \\${e.toString()}');
+      debugPrint('Body brut: \\${response.body}');
+    }
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data

@@ -18,7 +18,6 @@ class _ReportsPageState extends State<ReportsPage> {
   List<Promotion> _promotions = [];
   List<Project> _projects = [];
   bool _loadingPromos = true;
-  bool _loadingProjects = false;
   String? _error;
 
   @override
@@ -86,6 +85,7 @@ class _ReportsPageState extends State<ReportsPage> {
                       hint: const Text('Sélectionner un projet'),
                       value: _selectedProject,
                       items: _projects
+                          .where((p) => p.status != 'archived')
                           .map((p) => DropdownMenuItem(
                                 value: p,
                                 child: Text(p.name),
