@@ -3,6 +3,8 @@ import '../../data/datasources/group_remote_datasource.dart';
 import '../../data/datasources/deliverable_remote_datasource.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/deliverable.dart';
+import '../../domain/entities/submission.dart';
+import '../../data/datasources/submission_remote_datasource.dart';
 
 class GroupDeliverablesViewer extends StatefulWidget {
   final String projectId;
@@ -16,6 +18,7 @@ class _GroupDeliverablesViewerState extends State<GroupDeliverablesViewer> {
   List<Group> _groups = [];
   int _currentGroupIndex = 0;
   List<Deliverable> _deliverables = [];
+  List<Submission> _submissions = [];
   bool _loadingGroups = true;
   bool _loadingDeliverables = false;
   String? _error;
@@ -51,15 +54,19 @@ class _GroupDeliverablesViewerState extends State<GroupDeliverablesViewer> {
     setState(() {
       _loadingDeliverables = true;
       _deliverables = [];
+      _submissions = [];
     });
     try {
-      // On suppose que l'API retourne les livrables du groupe (sinon, filtrer côté client)
       _deliverables = await DeliverableRemoteDatasource().fetchDeliverablesByProject(widget.projectId);
+      // Récupérer les soumissions du groupe courant
+      final submissionsRaw = await SubmissionRemoteDatasource().fetchSubmissionsByGroup(groupId);
+      _submissions = submissionsRaw.map<Submission>((e) => Submission.fromJson(e)).toList();
       setState(() {
         _loadingDeliverables = false;
       });
     } catch (e) {
       setState(() {
+        debugPrint('group_deliverables_viewer.dart Erreur chargement livrables: $e');
         _error = 'Erreur chargement livrables';
         _loadingDeliverables = false;
       });
@@ -121,25 +128,42 @@ class _GroupDeliverablesViewerState extends State<GroupDeliverablesViewer> {
                     itemCount: _deliverables.length,
                     itemBuilder: (context, index) {
                       final d = _deliverables[index];
-                      return ListTile(
-                        title: Text(d.title),
-                        subtitle: Text(d.description),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(d.submitted ? 'Soumis' : 'Non soumis',
-                                style: TextStyle(
-                                    color: d.submitted ? Colors.green : Colors.red)),
-                            if (d.isLate)
-                              const Text('En retard',
-                                  style: TextStyle(color: Colors.orange)),
-                            Text(d.isConform ? 'Conforme' : 'Non conforme',
-                                style: TextStyle(
-                                    color: d.isConform ? Colors.green : Colors.red)),
-                            if (d.similarityRate != null)
-                              Text('Similarité: ${(d.similarityRate! * 100).toStringAsFixed(1)}%'),
-                          ],
+                      // Trouver la soumission du groupe pour ce livrable (null safe)
+                      final subList = _submissions.where((s) => s.deliverableId == d.id).toList();
+                      final submission = subList.isNotEmpty ? subList.first : null;
+                      IconData iconType;
+                      if (d.submissionType.toLowerCase().contains('git')) {
+                        iconType = Icons.code;
+                      } else if (d.submissionType.toLowerCase().contains('archive')) {
+                        iconType = Icons.archive;
+                      } else {
+                        iconType = Icons.description;
+                      }
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        child: ListTile(
+                          leading: Icon(iconType, size: 32),
+                          title: Text(d.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(d.description),
+                              const SizedBox(height: 4),
+                              Text('Date limite : ${d.deadline.toLocal().toString().substring(0, 16)}'),
+                              if (submission != null) ...[
+                                Text('Rendu le : ${submission.submittedAt.toLocal().toString().substring(0, 16)}',
+                                    style: TextStyle(color: submission.isLate ? Colors.orange : Colors.green)),
+                                if (submission.isLate)
+                                  const Text('En retard', style: TextStyle(color: Colors.orange)),
+                              ] else ...[
+                                const Text('Non rendu', style: TextStyle(color: Colors.red)),
+                              ],
+                              Text(d.isConform ? 'Conforme' : 'Non conforme',
+                                  style: TextStyle(color: d.isConform ? Colors.green : Colors.red)),
+                              if (d.similarityRate != null)
+                                Text('Similarité: ${(d.similarityRate! * 100).toStringAsFixed(1)}%'),
+                            ],
+                          ),
                         ),
                       );
                     },

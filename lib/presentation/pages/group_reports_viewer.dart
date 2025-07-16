@@ -1,5 +1,3 @@
-import '../../data/datasources/deliverable_remote_datasource.dart';
-import '../../data/datasources/submission_remote_datasource.dart';
 import '../../domain/entities/deliverable.dart';
 import '../../domain/entities/submission.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +18,6 @@ class GroupReportsViewer extends StatefulWidget {
 }
 
 class _GroupReportsViewerState extends State<GroupReportsViewer> {
-  List<Deliverable> _deliverables = [];
-  List<Submission> _submissions = [];
   List<Group> _groups = [];
   int _currentGroupIndex = 0;
   List<Report> _reports = [];
@@ -141,7 +137,7 @@ class _GroupReportsViewerState extends State<GroupReportsViewer> {
           Expanded(
             child: (() {
               // Un rapport est considéré comme vide si aucune section ET contenu vide
-              bool allReportsEmpty = _reports.isEmpty || _reports.every((r) => (r.sections.isEmpty && (r.content == null || r.content.trim().isEmpty)));
+              bool allReportsEmpty = _reports.isEmpty || _reports.every((r) => (r.sections.isEmpty && r.content.trim().isEmpty));
               if (allReportsEmpty) {
                 return Center(
                   child: Column(
@@ -164,7 +160,7 @@ class _GroupReportsViewerState extends State<GroupReportsViewer> {
                   itemBuilder: (context, index) {
                     final report = _reports[index];
                     // Si ce rapport est vide, on ne l'affiche pas
-                    if (report.sections.isEmpty && (report.content == null || report.content.trim().isEmpty)) {
+                    if (report.sections.isEmpty && report.content.trim().isEmpty) {
                       return const SizedBox.shrink();
                     }
                     return Card(
