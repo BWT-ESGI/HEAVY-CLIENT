@@ -19,6 +19,8 @@ class _GroupDeliverablesViewerState extends State<GroupDeliverablesViewer> {
   int _currentGroupIndex = 0;
   List<Deliverable> _deliverables = [];
   List<Submission> _submissions = [];
+  // Map pour stocker la conformité de chaque soumission : submissionId -> bool (true = conforme)
+  Map<String, bool> _conformityBySubmissionId = {};
   bool _loadingGroups = true;
   bool _loadingDeliverables = false;
   String? _error;
@@ -55,12 +57,23 @@ class _GroupDeliverablesViewerState extends State<GroupDeliverablesViewer> {
       _loadingDeliverables = true;
       _deliverables = [];
       _submissions = [];
+      _conformityBySubmissionId = {};
     });
     try {
       _deliverables = await DeliverableRemoteDatasource().fetchDeliverablesByProject(widget.projectId);
       // Récupérer les soumissions du groupe courant
       final submissionsRaw = await SubmissionRemoteDatasource().fetchSubmissionsByGroup(groupId);
       _submissions = submissionsRaw.map<Submission>((e) => Submission.fromJson(e)).toList();
+      // Pour chaque soumission, charger la conformité
+      for (final submission in _submissions) {
+        try {
+          final ruleResults = await SubmissionRemoteDatasource().fetchRuleResultsBySubmission(submission.id);
+          final isConform = ruleResults.isNotEmpty && ruleResults.every((r) => r['passed'] == true);
+          _conformityBySubmissionId[submission.id] = isConform;
+        } catch (e) {
+          _conformityBySubmissionId[submission.id] = false;
+        }
+      }
       setState(() {
         _loadingDeliverables = false;
       });
@@ -155,11 +168,17 @@ class _GroupDeliverablesViewerState extends State<GroupDeliverablesViewer> {
                                     style: TextStyle(color: submission.isLate ? Colors.orange : Colors.green)),
                                 if (submission.isLate)
                                   const Text('En retard', style: TextStyle(color: Colors.orange)),
+                                // Affichage conformité
+                                if (_conformityBySubmissionId.containsKey(submission.id))
+                                  Text(
+                                    _conformityBySubmissionId[submission.id]! ? 'Conforme' : 'Non conforme',
+                                    style: TextStyle(color: _conformityBySubmissionId[submission.id]! ? Colors.green : Colors.red),
+                                  )
+                                else
+                                  const Text('Conformité inconnue', style: TextStyle(color: Colors.grey)),
                               ] else ...[
                                 const Text('Non rendu', style: TextStyle(color: Colors.red)),
                               ],
-                              Text(d.isConform ? 'Conforme' : 'Non conforme',
-                                  style: TextStyle(color: d.isConform ? Colors.green : Colors.red)),
                               if (d.similarityRate != null)
                                 Text('Similarité: ${(d.similarityRate! * 100).toStringAsFixed(1)}%'),
                             ],
