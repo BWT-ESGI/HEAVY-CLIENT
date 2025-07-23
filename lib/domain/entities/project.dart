@@ -1,3 +1,4 @@
+
 class Project {
   final String id;
   final String name;
@@ -26,4 +27,19 @@ class Project {
     this.endAt,
     required this.status,
   });
+
+  factory Project.fromJson(Map<String, dynamic> json) => Project(
+        id: json['id'],
+        name: json['name'],
+        description: json['description'],
+        promotionId: json['promotionId'] ?? '',
+        nbStudentsMinPerGroup: json['nbStudentsMinPerGroup'],
+        nbStudentsMaxPerGroup: json['nbStudentsMaxPerGroup'],
+        groupCompositionType: json['groupCompositionType'] ?? '',
+        nbGroups: json['nbGroups'],
+        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+        updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+        endAt: json['endAt'] != null ? DateTime.parse(json['endAt']) : null,
+        status: json['status'] ?? '',
+      );
 }
