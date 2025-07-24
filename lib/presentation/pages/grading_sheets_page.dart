@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../data/datasources/deliverable_remote_datasource.dart';
 import '../../data/repositories/criteria_set_repository.dart';
 import '../../data/repositories/evaluation_grid_repository.dart';
 import '../../data/datasources/promotion_remote_datasource.dart';
@@ -12,6 +13,7 @@ import '../../domain/entities/project.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/criteria_set.dart';
 import '../../domain/entities/evaluation_grid.dart';
+import '../../domain/entities/deliverable.dart';
 
 class GradingSheetsPage extends StatefulWidget {
   const GradingSheetsPage({Key? key}) : super(key: key);
@@ -38,9 +40,12 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
   bool _loadingGroups = false;
   bool _loadingCriteriaSets = false;
   bool _loadingGrid = false;
+  bool _loadingDeliverables = false;
   String? _error;
   Map<String, int> _scores = {};
   Map<String, String> _comments = {};
+  List<Deliverable> _deliverables = [];
+  Deliverable? _selectedDeliverable;
 
   @override
   void initState() {
@@ -111,13 +116,29 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
     _fetchCriteriaSets();
   }
 
-  void _onCriteriaTypeChanged(String? type) {
+  void _onCriteriaTypeChanged(String? type) async {
     setState(() {
       _selectedCriteriaType = type ?? 'defense';
       _criteriaSets = [];
       _selectedCriteriaSet = null;
       _evaluationGrid = null;
+      _deliverables = [];
+      _selectedDeliverable = null;
+      _loadingDeliverables = false;
     });
+    if (_selectedCriteriaType == 'deliverable' && _selectedProject != null) {
+      setState(() { _loadingDeliverables = true; });
+      try {
+        final list = await DeliverableRemoteDatasource().fetchDeliverablesByProject(_selectedProject!.id);
+        setState(() {
+          _deliverables = list;
+          _selectedDeliverable = list.isNotEmpty ? list[0] : null;
+          _loadingDeliverables = false;
+        });
+      } catch (e) {
+        setState(() { _error = e.toString(); _loadingDeliverables = false; });
+      }
+    }
     _fetchCriteriaSets();
   }
 
@@ -141,12 +162,14 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
 
   Future<void> _fetchEvaluationGrid() async {
     if (_selectedCriteriaSet == null || _selectedGroup == null) return;
+    if (_selectedCriteriaType == 'deliverable' && _selectedDeliverable == null) return;
     setState(() { _loadingGrid = true; });
     final repo = EvaluationGridRepository(_storage);
     try {
       _evaluationGrid = await repo.fetchEvaluationGrid(
         criteriaSetId: _selectedCriteriaSet!.id!,
         groupId: _selectedGroup!.id,
+        deliverableId: _selectedCriteriaType == 'deliverable' ? _selectedDeliverable?.id : null,
       );
       setState(() {
         _loadingGrid = false;
@@ -160,6 +183,7 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
 
   Future<void> _submitGrid() async {
     if (_selectedCriteriaSet == null || _selectedGroup == null) return;
+    if (_selectedCriteriaType == 'deliverable' && _selectedDeliverable == null) return;
     setState(() { _loadingGrid = true; });
     final repo = EvaluationGridRepository(_storage);
     final userId = await _storage.read(key: 'userId') ?? '';
@@ -169,6 +193,7 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
       filledBy: userId,
       scores: _scores,
       comments: _comments,
+      deliverableId: _selectedCriteriaType == 'deliverable' ? _selectedDeliverable?.id : null,
     );
     try {
       await repo.submitEvaluationGrid(grid);
@@ -256,6 +281,30 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
                   DropdownMenuItem(value: 'report', child: Text('Rapport')),
                 ],
                 onChanged: _onCriteriaTypeChanged,
+              ),
+            if (_selectedCriteriaType == 'deliverable' && !_loadingDeliverables && _deliverables.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: DropdownButton<Deliverable>(
+                  value: _selectedDeliverable,
+                  hint: const Text('Sélectionner un livrable'),
+                  isExpanded: true,
+                  items: _deliverables.map((d) => DropdownMenuItem<Deliverable>(
+                    value: d,
+                    child: Text(d.title, overflow: TextOverflow.ellipsis),
+                  )).toList(),
+                  onChanged: (d) {
+                    setState(() {
+                      _selectedDeliverable = d;
+                    });
+                    _fetchEvaluationGrid();
+                  },
+                ),
+              ),
+            if (_selectedCriteriaType == 'deliverable' && _loadingDeliverables)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator()),
               ),
             if (_loadingCriteriaSets || _loadingGrid)
               const Center(child: CircularProgressIndicator()),

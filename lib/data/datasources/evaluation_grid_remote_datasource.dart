@@ -33,6 +33,18 @@ class EvaluationGridRemoteDatasource {
     });
     debugPrint('Response: ${res.statusCode} ${res.body}');
     if (res.statusCode == 200) {
+      if (res.body == null || res.body.isEmpty) {
+        debugPrint('Réponse vide de l\'API (grille d\'évaluation)');
+        // Retourne null ou gère le cas d'une grille absente
+        return EvaluationGrid(
+          id: null,
+          criteriaSetId: criteriaSetId,
+          groupId: groupId,
+          filledBy: '',
+          scores: {},
+          comments: {},
+        );
+      }
       final data = json.decode(res.body);
       return EvaluationGrid.fromJson(data);
     } else {
