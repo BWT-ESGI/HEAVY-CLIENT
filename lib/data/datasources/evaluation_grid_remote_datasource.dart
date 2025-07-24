@@ -42,7 +42,7 @@ class EvaluationGridRemoteDatasource {
           groupId: groupId,
           filledBy: '',
           scores: {},
-          comments: {},
+          comments: {}, projectId: '',
         );
       }
       final data = json.decode(res.body);
@@ -56,21 +56,25 @@ class EvaluationGridRemoteDatasource {
     final token = await storage.read(key: 'accessToken');
     final uri = Uri.parse('$_baseUrl/evaluation-grids');
     debugPrint('POST $uri');
+    final body = {
+      'criteriaSetId': grid.criteriaSetId,
+      'groupId': grid.groupId,
+      'filledBy': grid.filledBy,
+      'scores': grid.scores,
+      'comments': grid.comments,
+      // projectId is required by backend
+      'projectId': grid.projectId,
+      if (grid.deliverableId != null) 'deliverableId': grid.deliverableId,
+      if (grid.defenseId != null) 'defenseId': grid.defenseId,
+      if (grid.reportId != null) 'reportId': grid.reportId,
+    };
+    debugPrint('Payload: ' + json.encode(body));
     final res = await http.post(uri,
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({
-          'criteriaSetId': grid.criteriaSetId,
-          'groupId': grid.groupId,
-          'filledBy': grid.filledBy,
-          'scores': grid.scores,
-          'comments': grid.comments,
-          if (grid.deliverableId != null) 'deliverableId': grid.deliverableId,
-          if (grid.defenseId != null) 'defenseId': grid.defenseId,
-          if (grid.reportId != null) 'reportId': grid.reportId,
-        }));
+        body: json.encode(body));
     debugPrint('Response: ${res.statusCode} ${res.body}');
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw Exception('Erreur lors de la soumission de la grille d\'évaluation');

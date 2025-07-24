@@ -2,6 +2,7 @@ class EvaluationGrid {
   final String? id;
   final String criteriaSetId;
   final String groupId;
+  final String projectId;
   final String filledBy;
   final Map<String, int> scores;
   final Map<String, String> comments;
@@ -13,6 +14,7 @@ class EvaluationGrid {
     this.id,
     required this.criteriaSetId,
     required this.groupId,
+    required this.projectId,
     required this.filledBy,
     required this.scores,
     required this.comments,
@@ -25,6 +27,7 @@ class EvaluationGrid {
         id: json['id']?.toString(),
         criteriaSetId: json['criteriaSetId'] ?? '',
         groupId: json['groupId'] ?? '',
+        projectId: json['projectId'] ?? '',
         filledBy: json['filledBy'] ?? '',
         scores: Map<String, int>.from(json['scores'] ?? {}),
         comments: Map<String, String>.from(json['comments'] ?? {}),

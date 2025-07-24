@@ -170,6 +170,7 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
         criteriaSetId: _selectedCriteriaSet!.id!,
         groupId: _selectedGroup!.id,
         deliverableId: _selectedCriteriaType == 'deliverable' ? _selectedDeliverable?.id : null,
+        // projectId is not needed for fetch, only for submit
       );
       setState(() {
         _loadingGrid = false;
@@ -190,6 +191,7 @@ class _GradingSheetsPageState extends State<GradingSheetsPage> {
     final grid = EvaluationGrid(
       criteriaSetId: _selectedCriteriaSet!.id!,
       groupId: _selectedGroup!.id,
+      projectId: _selectedProject!.id,
       filledBy: userId,
       scores: _scores,
       comments: _comments,
